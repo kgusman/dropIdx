@@ -1,5 +1,5 @@
 # Constants are defined below
-MINIMUM_DEGREE = 40
+MINIMUM_DEGREE = 4
 
 
 class BtreeIndex:
@@ -52,7 +52,7 @@ class BtreeIndex:
 
         if not y.leaf:
             z.children = y.children[self.min_degree:2 * self.min_degree]
-            y.children = y.children[0:self.min_degree - 1]
+            y.children = y.children[0:self.min_degree]
 
     def insert_nonfull(self, x, k, p):
         # The auxiliary recursive procedure 'insert_nonfull(self, x, k)'
@@ -102,6 +102,8 @@ class BtreeIndex:
 
         r = self.root
         k = item.key
+
+        d = 32
 
         if self.is_node_full(r):
             s = self.Node()

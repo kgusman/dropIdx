@@ -7,7 +7,7 @@ from btreeindex import BtreeIndex
 
 # Constants are defined below
 DATA_SIZE = 20
-LIST_SIZE = 10000
+LIST_SIZE = 20000
 
 
 def generate_item_list(_size):
