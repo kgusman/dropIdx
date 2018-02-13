@@ -7,11 +7,11 @@ from btreeindex import BtreeIndex
 
 # Constants are defined below
 DATA_SIZE = 20
-LIST_SIZE = 20000
+LIST_SIZE = 10000
 
 
 def generate_item_list(_size):
-    return [Item(100-x, ''.join(random.choice(string.ascii_letters) for _ in range(DATA_SIZE))) for x in range(_size)]
+    return [Item(x, ''.join(random.choice(string.ascii_letters) for _ in range(DATA_SIZE))) for x in range(_size)]
 
 
 def search(_item_list, _item):
@@ -43,7 +43,7 @@ end = time.time()
 
 time_index = end - start
 
-print(time_no_index)
-print(time_index)
+print("Elapsed time for Btree Index: " + str(time_index))
+print("Faster by factor of: " + str(time_no_index/time_index))
 
 assert time_index < time_no_index, 'Your implementation sucks!'
