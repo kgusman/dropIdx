@@ -13,3 +13,7 @@ class InvalidValue(Exception):
 class InvalidSearch(Exception):
 	""" Raised if there some problems with search """
 	pass
+
+class InvalidFieldName(Exception):
+	""" Raised if there is no such field """
+	pass

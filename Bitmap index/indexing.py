@@ -1,4 +1,4 @@
-from exceptions import *
+from index_exceptions import *
 from bitarray import bitarray
 
 
@@ -23,8 +23,12 @@ class Index():
     def __add(self, condition):
         try:
             field, op, value = self.__parse_condition(condition)
+            if field not in self.data[0]:
+                raise InvalidFieldName
             if "==" == op:
                 return self.__equality(field, value)
+            elif "<" != op:
+                return self.__non_equality(field, value)
             elif ">=" == op:
                 if(self.__is_number(value)):
                     return self.__great_or_equal(field, value)
@@ -47,6 +51,8 @@ class Index():
                     raise InvalidValue
             else:
                 raise InvalidComparison
+        except InvalidFieldName:
+            print("Please, use correct field names.")
         except InvalidCondition:
             print("Please, use spaces in condition statements.")
         except InvalidComparison:
@@ -64,6 +70,19 @@ class Index():
         bits = bitarray('0' * self.length)
         for i in range(self.length):
             if str(self.data[i][field]) == value:
+                bits[i] = 1
+        return bits
+
+    def __non_equality(self, field, value):
+        # This private method returns bitarray with 1's where the whole condition satisfies
+        #
+        # Arguments:
+        #   field    A string with name of field
+        #   value    A string with value
+
+        bits = bitarray('0' * self.length)
+        for i in range(self.length):
+            if str(self.data[i][field]) != value:
                 bits[i] = 1
         return bits
 
@@ -176,7 +195,7 @@ class Index():
             print(result)
             # TODO: return data
         except InvalidSearch:
-            print("Problems with search. Check your conditions.")
+            print("Problems with search. Check the exceptions above.")
 
     def or_op(self, first_condition, second_condition):
         # This method applies bitwise operator 'or' to conditions
@@ -205,4 +224,4 @@ class Index():
             print(result)
             # TODO: return data
         except InvalidSearch:
-            print("Problems with search. Check the exception above.")
+            print("Problems with search. Check the exceptions above.")
