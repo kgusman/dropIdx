@@ -5,3 +5,7 @@ class InvalidCondition(Exception):
 class InvalidComparison(Exception):
 	""" Raised when the input contains invalid comparison operator"""
 	pass
+
+class InvalidValue(Exception):
+	""" Raised when the value is invalid """
+	pass
