@@ -9,3 +9,7 @@ class InvalidComparison(Exception):
 class InvalidValue(Exception):
 	""" Raised when the value is invalid """
 	pass
+
+class InvalidSearch(Exception):
+	""" Raised if there some problems with search """
+	pass
