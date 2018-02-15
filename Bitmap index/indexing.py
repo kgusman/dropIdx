@@ -1,4 +1,4 @@
-from Exceptions import *
+from exceptions import *
 from bitarray import bitarray
 
 
