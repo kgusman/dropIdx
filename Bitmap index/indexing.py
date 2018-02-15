@@ -1,7 +1,9 @@
+from Exceptions import InvalidCondition
 class Index():
 
     def __init__(self, data):
         self.data = data
+        self.indices = []
 
     def add_index(self, condition):
         # This method creates bitarray with objects which apply
@@ -9,7 +11,13 @@ class Index():
         #
         # Arguments:
         #	condition    A string with condition, which must be applied for the current data (e.g. "age > 5")
-        pass
+
+        try:
+        	field, op, value = self.__parse_condition(condition)
+        except InvalidCondition:
+        	print("Please, use spaces in condition statements.")
+
+
 
     def __parse_condition(self, condition):
         # Private method for parsing condition from a string to list of fieldname,
@@ -17,7 +25,12 @@ class Index():
         #
         # Arguments:
         #	condition    A string with condition, which must be applied for the current data (e.g. "age > 5")
-        pass
+        cond = condition.split(" ")
+    	if len(cond) == 3:
+			return cond
+    	else:
+			raise InvalidCondition
+
 
     def __get_by_id(self, ids):
         # Private method for getting necessary data by list of ids

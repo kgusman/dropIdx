@@ -1,0 +1,37 @@
+[
+	{
+		"firstname": "Kamill",
+		"lastname": "Gusmanov",
+		"age": 22,
+		"degree": "Bachelor",
+		"group": 3
+	},
+	{
+		"firstname": "Anton",
+		"lastname": "Prokopev",
+		"age": 20,
+		"degree": "Bachelor",
+		"track": "Software Engineering"
+	},
+	{
+		"firstname": "Anton",
+		"lastname": "Skudarnov",
+		"age": 21,
+		"degree": "Bachelor",
+		"track": "Software Engineering"
+	},
+	{
+		"firstname": "Bulat",
+		"lastname": "Maksudov",
+		"age": 20,
+		"degree": "Bachelor",
+		"track": "Data Science"
+	},
+	{
+		"firstname": "Gosha",
+		"lastname": "Emelyanov",
+		"age": 20,
+		"degree": "Bachelor",
+		"track": "Data Science"
+	}
+]
