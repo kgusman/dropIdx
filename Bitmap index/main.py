@@ -6,4 +6,4 @@ with open('students.json', 'r') as data_file:
 
 bitmap_index = Index(students)
 
-bitmap_index.add_index("age>5")
+bitmap_index.add_index("age == 20")
