@@ -1,13 +1,14 @@
 from index_exceptions import *
 from bitarray import bitarray
+from item import Item
 
 
 class BitMap():
 
-    def __init__(self, data):
-        self.data = data
-        self.length = len(data)
-        self.indices = {}
+    def __init__(self, item_list, condition):
+        self.data = item_list
+        self.length = len(item_list)
+        self.add_index(condition)
 
     def add_index(self, condition):
         # This method creates bitarray with objects which apply
@@ -18,41 +19,49 @@ class BitMap():
 
         bit_array = self.__add(condition)
         if bit_array is not None:
-            self.indices[condition] = bit_array
+            self.indices = bit_array.search(bitarray('1'))
+            self.false_indices = bit_array.search(bitarray('0'))
+
+    def search(self, item):
+        # This method searches item in data
+        #
+        # Arguments:
+        #   item    An item that has to be find
+        
+        if item.get_key() in self.indices:
+            return item.get_key()
+        elif item.get_key() in self.false_indices:
+            return item.get_key()
 
     def __add(self, condition):
         try:
-            field, op, value = self.__parse_condition(condition)
-            if field not in self.data[0]:
-                raise InvalidFieldName
+            op, value = self.__parse_condition(condition)
             if "==" == op:
-                return self.__equality(field, value)
+                return self.__equality(value)
             elif "<" != op:
-                return self.__non_equality(field, value)
+                return self.__non_equality(value)
             elif ">=" == op:
                 if(self.__is_number(value)):
-                    return self.__great_or_equal(field, value)
+                    return self.__great_or_equal(value)
                 else:
                     raise InvalidValue
             elif ">" == op:
                 if(self.__is_number(value)):
-                    return self.__great(field, value)
+                    return self.__great(value)
                 else:
                     raise InvalidValue
             elif "<=" == op:
                 if(self.__is_number(value)):
-                    return self.__less_or_equal(field, value)
+                    return self.__less_or_equal(value)
                 else:
                     raise InvalidValue
             elif "<" == op:
                 if(self.__is_number(value)):
-                    return self.__less_or_equal(field, value)
+                    return self.__less_or_equal(value)
                 else:
                     raise InvalidValue
             else:
                 raise InvalidComparison
-        except InvalidFieldName:
-            print("Please, use correct field names.")
         except InvalidCondition:
             print("Please, use spaces in condition statements.")
         except InvalidComparison:
@@ -60,7 +69,7 @@ class BitMap():
         except InvalidValue:
             print("Please, use correct comparison for non-digit operators.")
 
-    def __equality(self, field, value):
+    def __equality(self, value):
         # This private method returns bitarray with 1's where the whole condition satisfies
         #
         # Arguments:
@@ -68,12 +77,13 @@ class BitMap():
         #   value    A string with value
 
         bits = bitarray('0' * self.length)
-        for i in range(self.length):
-            if str(self.data[i][field]) == value:
+        bits.setall(False)
+        for i, d in enumerate(self.data):
+            if str(d.get_key()) == value:
                 bits[i] = 1
         return bits
 
-    def __non_equality(self, field, value):
+    def __non_equality(self, value):
         # This private method returns bitarray with 1's where the whole condition satisfies
         #
         # Arguments:
@@ -81,12 +91,13 @@ class BitMap():
         #   value    A string with value
 
         bits = bitarray('0' * self.length)
-        for i in range(self.length):
-            if str(self.data[i][field]) != value:
+        bits.setall(False)
+        for i, d in enumerate(self.data):
+            if str(d.get_key()) != value:
                 bits[i] = 1
         return bits
 
-    def __great_or_equal(self, field, value):
+    def __great_or_equal(self, value):
         # This private method returns bitarray with 1's where the whole condition satisfies
         #
         # Arguments:
@@ -94,12 +105,13 @@ class BitMap():
         #   value    A string with value
 
         bits = bitarray('0' * self.length)
-        for i in range(self.length):
-            if str(self.data[i][field]) >= value:
+        bits.setall(False)
+        for i, d in enumerate(self.data):
+            if str(d.get_key()) >= value:
                 bits[i] = 1
         return bits
 
-    def __great(self, field, value):
+    def __great(self, value):
         # This private method returns bitarray with 1's where the whole condition satisfies
         #
         # Arguments:
@@ -107,12 +119,13 @@ class BitMap():
         #   value    A string with value
 
         bits = bitarray('0' * self.length)
-        for i in range(self.length):
-            if str(self.data[i][field]) > value:
+        bits.setall(False)
+        for i, d in enumerate(self.data):
+            if str(d.get_key()) > value:
                 bits[i] = 1
         return bits
 
-    def __less_or_equal(self, field, value):
+    def __less_or_equal(self, value):
         # This private method returns bitarray with 1's where the whole condition satisfies
         #
         # Arguments:
@@ -120,12 +133,13 @@ class BitMap():
         #   value    A string with value
 
         bits = bitarray('0' * self.length)
-        for i in range(self.length):
-            if str(self.data[i][field]) <= value:
+        bits.setall(False)
+        for i, d in enumerate(self.data):
+            if str(d.get_key()) <= value:
                 bits[i] = 1
         return bits
 
-    def __less(self, field, value):
+    def __less(self, value):
         # This private method returns bitarray with 1's where the whole condition satisfies
         #
         # Arguments:
@@ -134,8 +148,8 @@ class BitMap():
 
         bits = bitarray(self.length)
         bits.setall(False)
-        for i in range(self.length):
-            if str(self.data[i][field]) < value:
+        for i, d in enumerate(self.data):
+            if str(d.get_key()) < value:
                 bits[i] = 1
         return bits
 
@@ -157,7 +171,7 @@ class BitMap():
         #   condition    A string with condition, which must be applied for the current data (e.g. "age > 5")
 
         cond = condition.split(" ")
-        if len(cond) == 3:
+        if len(cond) == 2:
             return cond
         else:
             raise InvalidCondition
