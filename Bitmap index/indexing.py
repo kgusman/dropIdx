@@ -132,7 +132,8 @@ class Index():
         #   field    A string with name of field
         #   value    A string with value
 
-        bits = bitarray('0' * self.length)
+        bits = bitarray(self.length)
+        bits.setall(False)
         for i in range(self.length):
             if str(self.data[i][field]) < value:
                 bits[i] = 1
