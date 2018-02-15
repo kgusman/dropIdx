@@ -2,7 +2,7 @@ from index_exceptions import *
 from bitarray import bitarray
 
 
-class Index():
+class BitMap():
 
     def __init__(self, data):
         self.data = data
@@ -163,11 +163,14 @@ class Index():
             raise InvalidCondition
 
     def __get_by_id(self, ids):
-        # Private method for getting necessary data by list of ids
+        # Private method for getting found data
         #
         # Arguments:
         #   ids    List with ids of elements
-        pass
+        result = []
+        for ind in ids:
+            result.append(self.data[ind])
+        return result
 
     def and_op(self, first_condition, second_condition):
         # This method applies bitwise operator 'and' to conditions
@@ -193,8 +196,7 @@ class Index():
                     raise InvalidSearch
                 self.indices[second_condition] = second_data
             result = first_data & second_data
-            print(result)
-            # TODO: return data
+            return self.__get_by_id(result.search(bitarray('1')))
         except InvalidSearch:
             print("Problems with search. Check the exceptions above.")
 
@@ -222,7 +224,6 @@ class Index():
                     raise InvalidSearch
                 self.indices[second_condition] = second_data
             result = first_data | second_data
-            print(result)
-            # TODO: return data
+            return self.__get_by_id(result.search(bitarray('1')))
         except InvalidSearch:
             print("Problems with search. Check the exceptions above.")
