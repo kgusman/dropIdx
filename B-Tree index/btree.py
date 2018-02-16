@@ -2,7 +2,10 @@
 MINIMUM_DEGREE = 4
 
 
-class BtreeIndex:
+import queue
+
+
+class BTree:
     # Class that represents a B-tree
     #
     # Attributes:
@@ -103,8 +106,6 @@ class BtreeIndex:
         r = self.root
         k = item.key
 
-        d = 32
-
         if self.is_node_full(r):
             s = self.Node()
             s.children.append(r)
@@ -134,40 +135,116 @@ class BtreeIndex:
         #   item   An item that is to be removed from this tree
         #   x      A node that contains the key of an item
 
+        def remove_predecessor_key(x):
+            if not x.leaf:
+                remove_predecessor_key(x.children[-1])
+            else:
+                return x.keys.pop(), x.pointers.pop()
+
+        def remove_successor_key(x):
+            if not x.leaf:
+                remove_successor_key(x.children[0])
+            else:
+                return x.keys.pop(0), x.pointers.pop(0)
+
+        def merge(k, p, y, z):
+            y.keys.append(k)
+            y.pointers.append(p)
+
+            y.keys = y.keys + z.keys
+            y.pointers = y.pointers + z.pointers
+            y.children = y.children + z.children
+
+            return y
+
+        def root(k, x):
+            for i, key in enumerate(x.keys):
+                if k < key:
+                        return i, x.children[i]
+
+            if k > x.keys[-1]:
+                    return -1, x.children[-1]
+
         if x is None:
-            x = self.search(item, None, False)
+            x = self.root
+
+        if self.root.children:
+            self.root = self.root.children[0]
 
         if not x.leaf:
-            t = x.keys.index(item.key)
-            y = x.children[t]
-            z = x.children[t + 1]
+            if item.key in x.keys:
+                t = x.keys.index(item.key)
+                y = x.children[t]
+                z = x.children[t + 1]
 
-            if len(y.keys) > self.min_degree - 1:
-                x.keys.insert(t, y.keys.pop())
-                z.keys.insert(0, x.keys.pop(t))
-                self.remove(item, z)
-            elif len(z.keys) > self.min_degree - 1:
-                x.keys.insert(t, z.keys.pop(0))
-                y.keys.append(x.keys.pop(t))
-                self.remove(item, y)
+                if len(y.keys) >= self.min_degree:
+                    new_k, new_p = remove_predecessor_key(y)
+
+                    x.keys[t] = new_k
+                    x.pointers[t] = new_p
+
+                    return item
+                elif len(z.keys) >= self.min_degree:
+                    new_k, new_p = remove_successor_key(z)
+
+                    x.keys[t] = new_k
+                    x.pointers[t] = new_p
+
+                    return item
+                else:
+                    y = merge(x.keys.pop(t), x.pointers.pop(t), y, z)
+                    del x.children[t + 1]
+
+                    return self.remove(item, y)
             else:
-                y.keys.append(x.keys.pop(t))
-                y.pointers = y.pointers + z.pointers
-                y.children = y.children + z.children
-                self.remove(item, y)
-        else:
-            t = x.keys.index(item.key)
-            x.keys.pop(t)
-            x.pointers.pop(t)
+                i, r = root(item.key, x)
 
-    def search(self, item, x=None, p=True):
+                y = x.children[i - 1] if i != 0 else None
+                z = x.children[i + 1] if i != -1 else None
+
+                if len(r.keys) == self.min_degree - 1:
+                    if y is not None and len(y.keys) >= self.min_degree:
+                        r.keys.insert(0, x.keys.pop(i - 1))
+                        r.pointers.insert(0, x.pointers.pop(i - 1))
+                        if not y.leaf:
+                            r.children.insert(0, y.children.pop())
+
+                        x.keys.insert(i - 1, y.keys.pop())
+                        x.pointers.insert(i - 1, y.pointers.pop())
+                    elif z is not None and len(z.keys) >= self.min_degree:
+                        r.keys.append(x.keys.pop(i))
+                        r.pointers.append(x.pointers.pop(i))
+                        if not r.leaf:
+                            r.children.append(z.children.pop(0))
+
+                        x.keys.insert(i, z.keys.pop(0))
+                        x.pointers.insert(i, z.pointers.pop(0))
+                    else:
+                        if i != 0:
+                            r = merge(x.keys.pop(i - 1), x.pointers.pop(i), y, r)
+                            del x.children[i]
+                        else:
+                            r = merge(x.keys.pop(i), x.pointers.pop(i), r, z)
+                            del x.children[i + 1]
+
+                return self.remove(item, r)
+        else:
+            if item.key in x.keys:
+                t = x.keys.index(item.key)
+                del x.keys[t]
+                del x.pointers[t]
+
+                return item
+            else:
+                return None
+
+    def search(self, item, x=None):
         # One of the main procedure that is used to find a
         # pointer corresponding to the given item.
         #
         # Arguments:
         #   x      A node
         #   item   An item that is to be found in this tree
-        #   p      Specifies whether the returned value should be a pointer or a node itself
 
         if x is None:
             x = self.root
@@ -177,14 +254,11 @@ class BtreeIndex:
             if item.key < key:
                 break
             elif item.key == key:
-                if p:
-                    return x.pointers[i]
-                else:
-                    return x
+                return x.pointers[i]
 
             i += 1
 
         if x.leaf:
             return None
         else:
-            return self.search(item, x.children[i], p)
+            return self.search(item, x.children[i])

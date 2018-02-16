@@ -3,7 +3,7 @@ import random
 import string
 
 from item import Item
-from btreeindex import BtreeIndex
+from btree import BTree
 
 # Constants are defined below
 DATA_SIZE = 20
@@ -21,7 +21,7 @@ def search(_item_list, _item):
 
 
 def build_btree_index(_item_list):
-    index = BtreeIndex()
+    index = BTree()
     [index.insert(x, i) for i, x in enumerate(_item_list)]
 
     return index
@@ -35,6 +35,14 @@ end = time.time()
 
 time_no_index = end - start
 
+# build a BTree
+btree_index = build_btree_index(item_list)
+
+# remove all entries from the built BTree just to check that it works
+for item in item_list:
+    btree_index.remove(item)
+
+# build another BTree
 btree_index = build_btree_index(item_list)
 
 start = time.time()
