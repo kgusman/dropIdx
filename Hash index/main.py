@@ -8,7 +8,7 @@ from hashindex import HashIndex_no_duplicates
 
 # Constants are defined below
 DATA_SIZE = 20
-LIST_SIZE = 20000000
+LIST_SIZE = 20
 
 
 def generate_item_list(_size):
@@ -22,7 +22,7 @@ def search(_item_list, _item):
 
 
 def build_hash_index(_item_list):
-    index = HashIndex_no_duplicates()
+    index = HashIndex()
     [index.insert(x, i) for i, x in enumerate(_item_list)]
 
     return index
@@ -35,7 +35,8 @@ item2 = item_list[index + 1]
 
 hash_index = build_hash_index(item_list)
 
-
+#Measuring raw search time is too boring, let's try to measure search + remove + search time
+#Assuming we should reconstruct whole hash index on removal (no lazy deletion)
 start = time.time()
 index1 = search(item_list, item1)
 index2 = search(item_list,item2)
