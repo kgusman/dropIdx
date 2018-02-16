@@ -2,9 +2,6 @@
 MINIMUM_DEGREE = 4
 
 
-import queue
-
-
 class BTree:
     # Class that represents a B-tree
     #
