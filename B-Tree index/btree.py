@@ -125,8 +125,8 @@ class BTree:
 
     def remove(self, item, x=None):
         # One of the main procedure that is used to remove a
-        # key from this tree. Note that the tree might become
-        # unbalanced after removal of a key from a lead node.
+        # key from this tree. Note that after removal of a key
+        # this tree always remains balanced.
         #
         # Arguments:
         #   item   An item that is to be removed from this tree
